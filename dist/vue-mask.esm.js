@@ -302,7 +302,8 @@ function masker(fn) {
     const post = parsePostFn('post' in data ? data.post : null);
     const formatter = 'pattern' in data && data.pattern ? new stringMask(data.pattern, data.options || {}) : null;
     const handler = 'handler' in data && typeof data.handler === 'function' ? data.handler : value => formatter ? formatter.apply(value) : value;
-    return (str, args = {}) => {
+    return function (str) {
+      let args = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
       args = { ...args,
         delimiter
       };
@@ -314,26 +315,37 @@ function masker(fn) {
   };
 }
 
-var mask = masker(({
-  value: pattern
-}) => ({
-  pattern,
-  pre: filterAlphanumeric,
-  post: value => value.trim().replace(/[^a-zA-Z0-9]$/, '')
-}));
+var mask = masker(_ref => {
+  let {
+    value: pattern
+  } = _ref;
+  return {
+    pattern,
+    pre: filterAlphanumeric,
+    post: value => value.trim().replace(/[^a-zA-Z0-9]$/, '')
+  };
+});
 
 const patterns = {
   us: '0000-00-00',
   br: '00/00/0000'
 };
-var date = masker(({
-  locale = null
-} = {}) => ({
-  pattern: patterns[locale || 'us'],
+var date = masker(function () {
+  let {
+    locale = null
+  } = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+  return {
+    pattern: patterns[locale || 'us'],
+    pre: filterNumbers
+  };
+});
+
+var hour = masker(() => ({
+  pattern: '00:00',
   pre: filterNumbers
 }));
 
-const handlers = {
+const handlers$1 = {
   get us() {
     const phone = new stringMask('(000) 000-0000');
     return value => phone.apply(value);
@@ -355,10 +367,11 @@ const handlers = {
   }
 
 };
-var phone = masker(({
-  locale
-}) => {
-  const handler = handlers[locale || 'us'];
+var phone = masker(_ref => {
+  let {
+    locale
+  } = _ref;
+  const handler = handlers$1[locale || 'us'];
   return {
     pre: filterNumbers,
     handler
@@ -375,10 +388,11 @@ const config = {
     decimal: ','
   }
 };
-var decimal = masker(({
-  locale,
-  value
-}) => {
+var decimal = masker(_ref => {
+  let {
+    locale,
+    value
+  } = _ref;
   const conf = config[locale || 'us'];
   const patternParts = [`#${conf.thousand}##0`];
   const precision = value || 0;
@@ -393,9 +407,11 @@ var decimal = masker(({
       reverse: true
     },
 
-    pre(value, {
-      delimiter
-    }) {
+    pre(value, _ref2) {
+      let {
+        delimiter
+      } = _ref2;
+
       if (!value) {
         return '';
       }
@@ -438,6 +454,24 @@ var cnpj = masker(() => ({
   pre: filterNumbers
 }));
 
+const handlers = {
+  get br() {
+    const cpf = new StringMask('000.000.000-00');
+    const cnpj = new StringMask('00.000.000/0000-00');
+    return value => {
+      if (value.length <= 11) return cpf.apply(value);else return cnpj.apply(value);
+    };
+  }
+
+};
+var cpfcnpj = masker(() => {
+  const handler = handlers['br'];
+  return {
+    pre: filterNumbers,
+    handler
+  };
+});
+
 var cep = masker(() => ({
   pattern: '00.000-000',
   pre: filterNumbers
@@ -452,11 +486,13 @@ var masks = /*#__PURE__*/Object.freeze({
 	__proto__: null,
 	mask: mask,
 	maskDate: date,
+	maskHour: hour,
 	maskPhone: phone,
 	maskDecimal: decimal,
 	maskNumber: number,
 	maskCpf: cpf,
 	maskCnpj: cnpj,
+	maskCpfCnpj: cpfcnpj,
 	maskCep: cep,
 	maskCc: creditCard
 });

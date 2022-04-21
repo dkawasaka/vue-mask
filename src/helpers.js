@@ -1,5 +1,5 @@
 export const getInputElement = (el) => {
-  const inputEl =  el.tagName.toLowerCase() !== 'input'
+  const inputEl = el.tagName.toLowerCase() !== 'input'
     ? el.querySelector('input:not([readonly])')
     : el;
 

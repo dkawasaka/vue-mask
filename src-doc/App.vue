@@ -111,6 +111,19 @@
       <input-code directive="v-mask-cnpj"></input-code>
     </div>
 
+
+    <div class="form-group">
+      <label class="form-label" for="cpfcnpj">CPF / CNPJ (BR)</label>
+      <div class="input-group">
+        <input class="form-input" type="text" 
+        id="cpfcnpj"
+               v-model="mask.cpfcnpj" v-mask-cpf-cnpj>
+        <span class="input-group-addon">{{ mask.cpfcnpj }}</span>
+      </div>
+      <input-code directive="v-mask-cpf"></input-code>
+    </div>
+
+
     <div class="form-group">
       <label class="form-label" for="cep">CEP (BR)</label>
       <div class="input-group">
