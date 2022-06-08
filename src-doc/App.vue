@@ -117,7 +117,7 @@
       <div class="input-group">
         <input class="form-input" type="text" 
         id="cpfcnpj"
-               v-model="mask.cpfcnpj" v-mask-cpf-cnpj>
+               v-model="mask.cpfcnpj" v-mask-cpfCnpj>
         <span class="input-group-addon">{{ mask.cpfcnpj }}</span>
       </div>
       <input-code directive="v-mask-cpf"></input-code>

@@ -550,16 +550,18 @@ var decimal = masker(function (_ref) {
   };
 });var handlers = {
   get br() {
-    var cpf = new StringMask('000.000.000-00');
-    var cnpj = new StringMask('00.000.000/0000-00');
+    var cpf = new stringMask('000.000.000-00');
+    var cnpj = new stringMask('00.000.000/0000-00');
     return function (value) {
+      console.log('length', value.length);
       if (value.length <= 11) return cpf.apply(value);else return cnpj.apply(value);
     };
   }
 
 };
-var cpfcnpj = masker(function () {
-  var handler = handlers['br'];
+var cpfcnpj = masker(function (_ref) {
+  var locale = _ref.locale;
+  var handler = handlers[locale || 'br'];
   return {
     pre: filterNumbers,
     handler: handler

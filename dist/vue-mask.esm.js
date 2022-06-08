@@ -456,16 +456,20 @@ var cnpj = masker(() => ({
 
 const handlers = {
   get br() {
-    const cpf = new StringMask('000.000.000-00');
-    const cnpj = new StringMask('00.000.000/0000-00');
+    const cpf = new stringMask('000.000.000-00');
+    const cnpj = new stringMask('00.000.000/0000-00');
     return value => {
+      console.log('length', value.length);
       if (value.length <= 11) return cpf.apply(value);else return cnpj.apply(value);
     };
   }
 
 };
-var cpfcnpj = masker(() => {
-  const handler = handlers['br'];
+var cpfcnpj = masker(_ref => {
+  let {
+    locale
+  } = _ref;
+  const handler = handlers[locale || 'br'];
   return {
     pre: filterNumbers,
     handler
