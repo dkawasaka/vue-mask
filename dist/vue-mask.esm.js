@@ -459,7 +459,7 @@ const handlers = {
     const cpf = new stringMask('000.000.000-00');
     const cnpj = new stringMask('00.000.000/0000-00');
     return value => {
-      console.log('length', value.length);
+      // console.log('length', value.length)
       if (value.length <= 11) return cpf.apply(value);else return cnpj.apply(value);
     };
   }
