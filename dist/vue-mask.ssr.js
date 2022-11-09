@@ -549,11 +549,18 @@ var decimal = masker(function (_ref) {
     pre: filterNumbers
   };
 });var handlers = {
+  get us() {
+    var cpf = new stringMask('000.000.000-00');
+    var cnpj = new stringMask('00.000.000/0000-00');
+    return function (value) {
+      if (value.length <= 11) return cpf.apply(value);else return cnpj.apply(value);
+    };
+  },
+
   get br() {
     var cpf = new stringMask('000.000.000-00');
     var cnpj = new stringMask('00.000.000/0000-00');
     return function (value) {
-      // console.log('length', value.length)
       if (value.length <= 11) return cpf.apply(value);else return cnpj.apply(value);
     };
   }
