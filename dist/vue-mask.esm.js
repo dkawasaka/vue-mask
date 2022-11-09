@@ -255,11 +255,9 @@ var stringMask = createCommonjsModule(function (module, exports) {
 
 const getInputElement = el => {
   const inputEl = el.tagName.toLowerCase() !== 'input' ? el.querySelector('input:not([readonly])') : el;
-
   if (!inputEl) {
     throw new Error('Mask directive requires at least one input');
   }
-
   return inputEl;
 };
 function createEvent(name) {
@@ -274,14 +272,11 @@ const parsePreFn = arg => {
   if (typeof arg === 'function') {
     return arg;
   }
-
   switch (arg) {
     case 'filter-number':
       return filterNumbers;
-
     case 'filter-letter':
       return filterLetters;
-
     default:
       return filterAlphanumeric;
   }
@@ -290,7 +285,6 @@ const parsePostFn = arg => {
   if (typeof arg === 'function') {
     return arg;
   }
-
   return value => value.trim().replace(/[^0-9]$/, '');
 };
 
@@ -302,8 +296,10 @@ function masker(fn) {
     const post = parsePostFn('post' in data ? data.post : null);
     const formatter = 'pattern' in data && data.pattern ? new stringMask(data.pattern, data.options || {}) : null;
     const handler = 'handler' in data && typeof data.handler === 'function' ? data.handler : value => formatter ? formatter.apply(value) : value;
-    return (str, args = {}) => {
-      args = { ...args,
+    return function (str) {
+      let args = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+      args = {
+        ...args,
         delimiter
       };
       str = pre(str, args);
@@ -314,24 +310,30 @@ function masker(fn) {
   };
 }
 
-var mask = masker(({
-  value: pattern
-}) => ({
-  pattern,
-  pre: filterAlphanumeric,
-  post: value => value.trim().replace(/[^a-zA-Z0-9]$/, '')
-}));
+var mask = masker(_ref => {
+  let {
+    value: pattern
+  } = _ref;
+  return {
+    pattern,
+    pre: filterAlphanumeric,
+    post: value => value.trim().replace(/[^a-zA-Z0-9]$/, '')
+  };
+});
 
 const patterns = {
   us: '0000-00-00',
   br: '00/00/0000'
 };
-var date = masker(({
-  locale = null
-} = {}) => ({
-  pattern: patterns[locale || 'us'],
-  pre: filterNumbers
-}));
+var date = masker(function () {
+  let {
+    locale = null
+  } = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+  return {
+    pattern: patterns[locale || 'us'],
+    pre: filterNumbers
+  };
+});
 
 var hour = masker(() => ({
   pattern: '00:00',
@@ -343,7 +345,6 @@ const handlers$1 = {
     const phone = new stringMask('(000) 000-0000');
     return value => phone.apply(value);
   },
-
   get br() {
     const phone = new stringMask('(00) 0000-0000');
     const phone9 = new stringMask('(00) 9 0000-0000');
@@ -354,15 +355,14 @@ const handlers$1 = {
       } else if (value.length <= 10) {
         return phone.apply(value);
       }
-
       return phone9.apply(value);
     };
   }
-
 };
-var phone = masker(({
-  locale
-}) => {
+var phone = masker(_ref => {
+  let {
+    locale
+  } = _ref;
   const handler = handlers$1[locale || 'us'];
   return {
     pre: filterNumbers,
@@ -380,46 +380,40 @@ const config = {
     decimal: ','
   }
 };
-var decimal = masker(({
-  locale,
-  value
-}) => {
+var decimal = masker(_ref => {
+  let {
+    locale,
+    value
+  } = _ref;
   const conf = config[locale || 'us'];
   const patternParts = [`#${conf.thousand}##0`];
   const precision = value || 0;
-
   if (precision) {
     patternParts.push(conf.decimal, new Array(precision).fill('0').join(''));
   }
-
   return {
     pattern: patternParts.join(''),
     options: {
       reverse: true
     },
-
-    pre(value, {
-      delimiter
-    }) {
+    pre(value, _ref2) {
+      let {
+        delimiter
+      } = _ref2;
       if (!value) {
         return '';
       }
-
       const sign = value.startsWith('-') ? '-' : '';
       let [number, fraction = ''] = value.split(conf.decimal).map(filterNumbers);
-
       if (fraction && fraction.length > precision) {
         number = `${number}${fraction.slice(0, -precision)}`;
         fraction = fraction.slice(-precision);
       }
-
       return [sign, delimiter, Number(number), fraction].join('');
     },
-
     post(value) {
       return value;
     }
-
   };
 });
 
@@ -451,7 +445,6 @@ const handlers = {
       if (value.length <= 11) return cpf.apply(value);else return cnpj.apply(value);
     };
   },
-
   get br() {
     const cpf = new stringMask('000.000.000-00');
     const cnpj = new stringMask('00.000.000/0000-00');
@@ -459,11 +452,11 @@ const handlers = {
       if (value.length <= 11) return cpf.apply(value);else return cnpj.apply(value);
     };
   }
-
 };
-var cpfcnpj = masker(({
-  locale
-}) => {
+var cpfcnpj = masker(_ref => {
+  let {
+    locale
+  } = _ref;
   const handler = handlers[locale || 'br'];
   return {
     pre: filterNumbers,
@@ -499,28 +492,25 @@ var masks = /*#__PURE__*/Object.freeze({
 function updater(el, masker) {
   const currentValue = el.value;
   const oldValue = el.dataset.value;
-
   if (oldValue === currentValue) {
     return;
   }
-
   const newValue = masker(currentValue, {
     el
   });
-
   if (newValue === currentValue) {
     el.dataset.value = currentValue;
     return;
-  } // Get current cursor position
+  }
 
+  // Get current cursor position
+  let position = el.selectionEnd;
 
-  let position = el.selectionEnd; // Find next cursor position
-
+  // Find next cursor position
   if (position === currentValue.length) {
     position = newValue.length;
   } else if (position > 0 && position <= newValue.length) {
     const digit = currentValue.charAt(position - 1);
-
     if (digit !== newValue.charAt(position - 1)) {
       if (digit === newValue.charAt(position)) {
         position += 1;
@@ -529,21 +519,18 @@ function updater(el, masker) {
       }
     }
   }
-
   el.value = newValue;
   el.dataset.value = newValue;
-
   if (el === document.activeElement) {
     // Restore cursor position
     el.setSelectionRange(position, position);
   }
-
   el.dispatchEvent(createEvent('input'));
 }
-
 function make(maskerFn) {
   const maskerMap = new WeakMap();
-  const inputMap = new WeakMap(); // const eventMap = new WeakMap();
+  const inputMap = new WeakMap();
+  // const eventMap = new WeakMap();
 
   return {
     beforeMount(el, binding) {
@@ -551,34 +538,37 @@ function make(maskerFn) {
         value: binding.value,
         locale: binding.arg || Object.keys(binding.modifiers)[0] || null
       });
-      const inputEl = getInputElement(el); // const eventHandler = ({ isTrusted }) => {
+      const inputEl = getInputElement(el);
+
+      // const eventHandler = ({ isTrusted }) => {
       //   if (isTrusted) {
       //     updater(inputEl, masker);
       //   }
       // };
 
       maskerMap.set(el, masker);
-      inputMap.set(el, inputEl); // eventMap.set(el, eventHandler);
+      inputMap.set(el, inputEl);
+      // eventMap.set(el, eventHandler);
+
       // inputEl.addEventListener('input', eventHandler);
     },
 
     mounted(el) {
       updater(inputMap.get(el), maskerMap.get(el));
     },
-
     updated(el) {
       updater(inputMap.get(el), maskerMap.get(el));
     },
-
     unmounted(el) {
       // el.removeEventListener('input', inputMap.get(el));
       maskerMap.delete(el);
-      inputMap.delete(el); // eventMap.delete(el);
+      inputMap.delete(el);
+      // eventMap.delete(el);
     }
-
   };
 }
 
+// install function executed by Vue.use()
 const install = function installPlugin(app) {
   // Register directives
   for (const name in masks) {

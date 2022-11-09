@@ -1,41 +1,24 @@
 'use strict';function ownKeys(object, enumerableOnly) {
   var keys = Object.keys(object);
-
   if (Object.getOwnPropertySymbols) {
     var symbols = Object.getOwnPropertySymbols(object);
-
-    if (enumerableOnly) {
-      symbols = symbols.filter(function (sym) {
-        return Object.getOwnPropertyDescriptor(object, sym).enumerable;
-      });
-    }
-
-    keys.push.apply(keys, symbols);
+    enumerableOnly && (symbols = symbols.filter(function (sym) {
+      return Object.getOwnPropertyDescriptor(object, sym).enumerable;
+    })), keys.push.apply(keys, symbols);
   }
-
   return keys;
 }
-
 function _objectSpread2(target) {
   for (var i = 1; i < arguments.length; i++) {
-    var source = arguments[i] != null ? arguments[i] : {};
-
-    if (i % 2) {
-      ownKeys(Object(source), true).forEach(function (key) {
-        _defineProperty(target, key, source[key]);
-      });
-    } else if (Object.getOwnPropertyDescriptors) {
-      Object.defineProperties(target, Object.getOwnPropertyDescriptors(source));
-    } else {
-      ownKeys(Object(source)).forEach(function (key) {
-        Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key));
-      });
-    }
+    var source = null != arguments[i] ? arguments[i] : {};
+    i % 2 ? ownKeys(Object(source), !0).forEach(function (key) {
+      _defineProperty(target, key, source[key]);
+    }) : Object.getOwnPropertyDescriptors ? Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)) : ownKeys(Object(source)).forEach(function (key) {
+      Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key));
+    });
   }
-
   return target;
 }
-
 function _defineProperty(obj, key, value) {
   if (key in obj) {
     Object.defineProperty(obj, key, {
@@ -47,32 +30,24 @@ function _defineProperty(obj, key, value) {
   } else {
     obj[key] = value;
   }
-
   return obj;
 }
-
 function _slicedToArray(arr, i) {
   return _arrayWithHoles(arr) || _iterableToArrayLimit(arr, i) || _unsupportedIterableToArray(arr, i) || _nonIterableRest();
 }
-
 function _arrayWithHoles(arr) {
   if (Array.isArray(arr)) return arr;
 }
-
 function _iterableToArrayLimit(arr, i) {
   var _i = arr == null ? null : typeof Symbol !== "undefined" && arr[Symbol.iterator] || arr["@@iterator"];
-
   if (_i == null) return;
   var _arr = [];
   var _n = true;
   var _d = false;
-
   var _s, _e;
-
   try {
     for (_i = _i.call(arr); !(_n = (_s = _i.next()).done); _n = true) {
       _arr.push(_s.value);
-
       if (i && _arr.length === i) break;
     }
   } catch (err) {
@@ -85,10 +60,8 @@ function _iterableToArrayLimit(arr, i) {
       if (_d) throw _e;
     }
   }
-
   return _arr;
 }
-
 function _unsupportedIterableToArray(o, minLen) {
   if (!o) return;
   if (typeof o === "string") return _arrayLikeToArray(o, minLen);
@@ -97,15 +70,11 @@ function _unsupportedIterableToArray(o, minLen) {
   if (n === "Map" || n === "Set") return Array.from(o);
   if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen);
 }
-
 function _arrayLikeToArray(arr, len) {
   if (len == null || len > arr.length) len = arr.length;
-
   for (var i = 0, arr2 = new Array(len); i < len; i++) arr2[i] = arr[i];
-
   return arr2;
 }
-
 function _nonIterableRest() {
   throw new TypeError("Invalid attempt to destructure non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method.");
 }var commonjsGlobal = typeof globalThis !== 'undefined' ? globalThis : typeof window !== 'undefined' ? window : typeof global !== 'undefined' ? global : typeof self !== 'undefined' ? self : {};
@@ -361,11 +330,9 @@ function createCommonjsModule(fn) {
 }));
 });var getInputElement = function getInputElement(el) {
   var inputEl = el.tagName.toLowerCase() !== 'input' ? el.querySelector('input:not([readonly])') : el;
-
   if (!inputEl) {
     throw new Error('Mask directive requires at least one input');
   }
-
   return inputEl;
 };
 function createEvent(name) {
@@ -386,14 +353,11 @@ var parsePreFn = function parsePreFn(arg) {
   if (typeof arg === 'function') {
     return arg;
   }
-
   switch (arg) {
     case 'filter-number':
       return filterNumbers;
-
     case 'filter-letter':
       return filterLetters;
-
     default:
       return filterAlphanumeric;
   }
@@ -402,7 +366,6 @@ var parsePostFn = function parsePostFn(arg) {
   if (typeof arg === 'function') {
     return arg;
   }
-
   return function (value) {
     return value.trim().replace(/[^0-9]$/, '');
   };
@@ -422,12 +385,10 @@ function masker(fn) {
         delimiter: delimiter
       });
       str = pre(str, args);
-
       var _split = (!str.includes(delimiter) ? "".concat(delimiter).concat(str) : str).split(delimiter),
-          _split2 = _slicedToArray(_split, 2),
-          prefix = _split2[0],
-          value = _split2[1];
-
+        _split2 = _slicedToArray(_split, 2),
+        prefix = _split2[0],
+        value = _split2[1];
       value = handler(value, args);
       return post("".concat(prefix).concat(value), args);
     };
@@ -447,9 +408,8 @@ function masker(fn) {
 };
 var date = masker(function () {
   var _ref = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {},
-      _ref$locale = _ref.locale,
-      locale = _ref$locale === void 0 ? null : _ref$locale;
-
+    _ref$locale = _ref.locale,
+    locale = _ref$locale === void 0 ? null : _ref$locale;
   return {
     pattern: patterns[locale || 'us'],
     pre: filterNumbers
@@ -466,7 +426,6 @@ var date = masker(function () {
       return phone.apply(value);
     };
   },
-
   get br() {
     var phone = new stringMask('(00) 0000-0000');
     var phone9 = new stringMask('(00) 9 0000-0000');
@@ -477,11 +436,9 @@ var date = masker(function () {
       } else if (value.length <= 10) {
         return phone.apply(value);
       }
-
       return phone9.apply(value);
     };
   }
-
 };
 var phone = masker(function (_ref) {
   var locale = _ref.locale;
@@ -502,15 +459,13 @@ var phone = masker(function (_ref) {
 };
 var decimal = masker(function (_ref) {
   var locale = _ref.locale,
-      value = _ref.value;
+    value = _ref.value;
   var conf = config[locale || 'us'];
   var patternParts = ["#".concat(conf.thousand, "##0")];
   var precision = value || 0;
-
   if (precision) {
     patternParts.push(conf.decimal, new Array(precision).fill('0').join(''));
   }
-
   return {
     pattern: patternParts.join(''),
     options: {
@@ -518,24 +473,19 @@ var decimal = masker(function (_ref) {
     },
     pre: function pre(value, _ref2) {
       var delimiter = _ref2.delimiter;
-
       if (!value) {
         return '';
       }
-
       var sign = value.startsWith('-') ? '-' : '';
-
       var _value$split$map = value.split(conf.decimal).map(filterNumbers),
-          _value$split$map2 = _slicedToArray(_value$split$map, 2),
-          number = _value$split$map2[0],
-          _value$split$map2$ = _value$split$map2[1],
-          fraction = _value$split$map2$ === void 0 ? '' : _value$split$map2$;
-
+        _value$split$map2 = _slicedToArray(_value$split$map, 2),
+        number = _value$split$map2[0],
+        _value$split$map2$ = _value$split$map2[1],
+        fraction = _value$split$map2$ === void 0 ? '' : _value$split$map2$;
       if (fraction && fraction.length > precision) {
         number = "".concat(number).concat(fraction.slice(0, -precision));
         fraction = fraction.slice(-precision);
       }
-
       return [sign, delimiter, Number(number), fraction].join('');
     },
     post: function post(value) {
@@ -568,7 +518,6 @@ var decimal = masker(function (_ref) {
       if (value.length <= 11) return cpf.apply(value);else return cnpj.apply(value);
     };
   },
-
   get br() {
     var cpf = new stringMask('000.000.000-00');
     var cnpj = new stringMask('00.000.000/0000-00');
@@ -576,7 +525,6 @@ var decimal = masker(function (_ref) {
       if (value.length <= 11) return cpf.apply(value);else return cnpj.apply(value);
     };
   }
-
 };
 var cpfcnpj = masker(function (_ref) {
   var locale = _ref.locale;
@@ -595,31 +543,28 @@ var cpfcnpj = masker(function (_ref) {
     pattern: '0000 0000 0000 0000',
     pre: filterNumbers
   };
-});var masks=/*#__PURE__*/Object.freeze({__proto__:null,mask: mask,maskDate: date,maskHour: hour,maskPhone: phone,maskDecimal: decimal,maskNumber: number,maskCpf: cpf,maskCnpj: cnpj,maskCpfCnpj: cpfcnpj,maskCep: cep,maskCc: creditCard});function updater(el, masker) {
+});var masks=/*#__PURE__*/Object.freeze({__proto__:null,mask:mask,maskDate:date,maskHour:hour,maskPhone:phone,maskDecimal:decimal,maskNumber:number,maskCpf:cpf,maskCnpj:cnpj,maskCpfCnpj:cpfcnpj,maskCep:cep,maskCc:creditCard});function updater(el, masker) {
   var currentValue = el.value;
   var oldValue = el.dataset.value;
-
   if (oldValue === currentValue) {
     return;
   }
-
   var newValue = masker(currentValue, {
     el: el
   });
-
   if (newValue === currentValue) {
     el.dataset.value = currentValue;
     return;
-  } // Get current cursor position
+  }
 
+  // Get current cursor position
+  var position = el.selectionEnd;
 
-  var position = el.selectionEnd; // Find next cursor position
-
+  // Find next cursor position
   if (position === currentValue.length) {
     position = newValue.length;
   } else if (position > 0 && position <= newValue.length) {
     var digit = currentValue.charAt(position - 1);
-
     if (digit !== newValue.charAt(position - 1)) {
       if (digit === newValue.charAt(position)) {
         position += 1;
@@ -628,21 +573,18 @@ var cpfcnpj = masker(function (_ref) {
       }
     }
   }
-
   el.value = newValue;
   el.dataset.value = newValue;
-
   if (el === document.activeElement) {
     // Restore cursor position
     el.setSelectionRange(position, position);
   }
-
   el.dispatchEvent(createEvent('input'));
 }
-
 function make(maskerFn) {
   var maskerMap = new WeakMap();
-  var inputMap = new WeakMap(); // const eventMap = new WeakMap();
+  var inputMap = new WeakMap();
+  // const eventMap = new WeakMap();
 
   return {
     beforeMount: function beforeMount(el, binding) {
@@ -650,14 +592,18 @@ function make(maskerFn) {
         value: binding.value,
         locale: binding.arg || Object.keys(binding.modifiers)[0] || null
       });
-      var inputEl = getInputElement(el); // const eventHandler = ({ isTrusted }) => {
+      var inputEl = getInputElement(el);
+
+      // const eventHandler = ({ isTrusted }) => {
       //   if (isTrusted) {
       //     updater(inputEl, masker);
       //   }
       // };
 
       maskerMap.set(el, masker);
-      inputMap.set(el, inputEl); // eventMap.set(el, eventHandler);
+      inputMap.set(el, inputEl);
+      // eventMap.set(el, eventHandler);
+
       // inputEl.addEventListener('input', eventHandler);
     },
     mounted: function mounted(el) {
@@ -669,10 +615,12 @@ function make(maskerFn) {
     unmounted: function unmounted(el) {
       // el.removeEventListener('input', inputMap.get(el));
       maskerMap.delete(el);
-      inputMap.delete(el); // eventMap.delete(el);
+      inputMap.delete(el);
+      // eventMap.delete(el);
     }
   };
-}var install = function installPlugin(app) {
+}// install function executed by Vue.use()
+var install = function installPlugin(app) {
   // Register directives
   for (var name in masks) {
     app.directive(name, make(masks[name]));
