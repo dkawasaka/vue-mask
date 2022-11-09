@@ -3,9 +3,14 @@
 
   if (Object.getOwnPropertySymbols) {
     var symbols = Object.getOwnPropertySymbols(object);
-    enumerableOnly && (symbols = symbols.filter(function (sym) {
-      return Object.getOwnPropertyDescriptor(object, sym).enumerable;
-    })), keys.push.apply(keys, symbols);
+
+    if (enumerableOnly) {
+      symbols = symbols.filter(function (sym) {
+        return Object.getOwnPropertyDescriptor(object, sym).enumerable;
+      });
+    }
+
+    keys.push.apply(keys, symbols);
   }
 
   return keys;
@@ -13,12 +18,19 @@
 
 function _objectSpread2(target) {
   for (var i = 1; i < arguments.length; i++) {
-    var source = null != arguments[i] ? arguments[i] : {};
-    i % 2 ? ownKeys(Object(source), !0).forEach(function (key) {
-      _defineProperty(target, key, source[key]);
-    }) : Object.getOwnPropertyDescriptors ? Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)) : ownKeys(Object(source)).forEach(function (key) {
-      Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key));
-    });
+    var source = arguments[i] != null ? arguments[i] : {};
+
+    if (i % 2) {
+      ownKeys(Object(source), true).forEach(function (key) {
+        _defineProperty(target, key, source[key]);
+      });
+    } else if (Object.getOwnPropertyDescriptors) {
+      Object.defineProperties(target, Object.getOwnPropertyDescriptors(source));
+    } else {
+      ownKeys(Object(source)).forEach(function (key) {
+        Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key));
+      });
+    }
   }
 
   return target;
@@ -583,7 +595,7 @@ var cpfcnpj = masker(function (_ref) {
     pattern: '0000 0000 0000 0000',
     pre: filterNumbers
   };
-});var masks=/*#__PURE__*/Object.freeze({__proto__:null,mask:mask,maskDate:date,maskHour:hour,maskPhone:phone,maskDecimal:decimal,maskNumber:number,maskCpf:cpf,maskCnpj:cnpj,maskCpfCnpj:cpfcnpj,maskCep:cep,maskCc:creditCard});function updater(el, masker) {
+});var masks=/*#__PURE__*/Object.freeze({__proto__:null,mask: mask,maskDate: date,maskHour: hour,maskPhone: phone,maskDecimal: decimal,maskNumber: number,maskCpf: cpf,maskCnpj: cnpj,maskCpfCnpj: cpfcnpj,maskCep: cep,maskCc: creditCard});function updater(el, masker) {
   var currentValue = el.value;
   var oldValue = el.dataset.value;
 

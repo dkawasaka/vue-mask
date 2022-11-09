@@ -302,8 +302,7 @@ function masker(fn) {
     const post = parsePostFn('post' in data ? data.post : null);
     const formatter = 'pattern' in data && data.pattern ? new stringMask(data.pattern, data.options || {}) : null;
     const handler = 'handler' in data && typeof data.handler === 'function' ? data.handler : value => formatter ? formatter.apply(value) : value;
-    return function (str) {
-      let args = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+    return (str, args = {}) => {
       args = { ...args,
         delimiter
       };
@@ -315,30 +314,24 @@ function masker(fn) {
   };
 }
 
-var mask = masker(_ref => {
-  let {
-    value: pattern
-  } = _ref;
-  return {
-    pattern,
-    pre: filterAlphanumeric,
-    post: value => value.trim().replace(/[^a-zA-Z0-9]$/, '')
-  };
-});
+var mask = masker(({
+  value: pattern
+}) => ({
+  pattern,
+  pre: filterAlphanumeric,
+  post: value => value.trim().replace(/[^a-zA-Z0-9]$/, '')
+}));
 
 const patterns = {
   us: '0000-00-00',
   br: '00/00/0000'
 };
-var date = masker(function () {
-  let {
-    locale = null
-  } = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
-  return {
-    pattern: patterns[locale || 'us'],
-    pre: filterNumbers
-  };
-});
+var date = masker(({
+  locale = null
+} = {}) => ({
+  pattern: patterns[locale || 'us'],
+  pre: filterNumbers
+}));
 
 var hour = masker(() => ({
   pattern: '00:00',
@@ -367,10 +360,9 @@ const handlers$1 = {
   }
 
 };
-var phone = masker(_ref => {
-  let {
-    locale
-  } = _ref;
+var phone = masker(({
+  locale
+}) => {
   const handler = handlers$1[locale || 'us'];
   return {
     pre: filterNumbers,
@@ -388,11 +380,10 @@ const config = {
     decimal: ','
   }
 };
-var decimal = masker(_ref => {
-  let {
-    locale,
-    value
-  } = _ref;
+var decimal = masker(({
+  locale,
+  value
+}) => {
   const conf = config[locale || 'us'];
   const patternParts = [`#${conf.thousand}##0`];
   const precision = value || 0;
@@ -407,11 +398,9 @@ var decimal = masker(_ref => {
       reverse: true
     },
 
-    pre(value, _ref2) {
-      let {
-        delimiter
-      } = _ref2;
-
+    pre(value, {
+      delimiter
+    }) {
       if (!value) {
         return '';
       }
@@ -472,10 +461,9 @@ const handlers = {
   }
 
 };
-var cpfcnpj = masker(_ref => {
-  let {
-    locale
-  } = _ref;
+var cpfcnpj = masker(({
+  locale
+}) => {
   const handler = handlers[locale || 'br'];
   return {
     pre: filterNumbers,
